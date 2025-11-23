@@ -1,0 +1,96 @@
+.palette-presets {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    /* Hide scrollbar for cleaner look */
+    scrollbar-width: none;
+}
+
+.palette-presets::-webkit-scrollbar {
+    display: none;
+}
+
+.palette-swatch {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.2s;
+}
+
+.palette-swatch:hover {
+    transform: scale(1.05);
+    border-color: #fff;
+}
+
+.swatch-ink {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.swatch-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.color-pickers {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.color-picker-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-picker-item label {
+    font-size: 0.9rem;
+    color: #888;
+    width: 24px;
+}
+
+.color-input-wrapper {
+    flex: 1;
+    height: 32px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    position: relative;
+}
+
+.color-input-wrapper input[type="color"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.color-value {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #ccc;
+    pointer-events: none;
+}

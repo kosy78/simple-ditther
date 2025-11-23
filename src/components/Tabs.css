@@ -1,0 +1,30 @@
+.tabs-container {
+    display: flex;
+    background-color: #111;
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.tab-button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-button:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab-button.active {
+    background-color: #222;
+    color: #fff;
+    font-weight: 600;
+}
