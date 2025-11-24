@@ -4,7 +4,7 @@ import { Select } from './components/Select';
 import { ColorPalette } from './components/ColorPalette';
 import { Tabs } from './components/Tabs';
 import { useMediaProcessor } from './hooks/useMediaProcessor';
-import { DEFAULT_CHAR_SET, DENSE_CHAR_SET } from './lib/ascii';
+import { DEFAULT_CHAR_SET, DENSE_CHAR_SET, BINARY_CHAR_SET } from './lib/ascii';
 
 function App() {
   // State
@@ -21,6 +21,8 @@ function App() {
 
   // Shared State
   const [inkColor, setInkColor] = useState('#000000');
+  const [inkMode, setInkMode] = useState<'solid' | 'gradient'>('solid');
+  const [inkGradient, setInkGradient] = useState<string[]>(['#ff0000', '#0000ff']);
   const [bgColor, setBgColor] = useState('#ffffff');
   const [brightness, setBrightness] = useState(1.0);
   const [contrast, setContrast] = useState(1.0);
@@ -42,6 +44,8 @@ function App() {
       algorithm,
       pointSize,
       inkColor,
+      inkMode,
+      inkGradient,
       bgColor,
       brightness,
       contrast,
@@ -49,7 +53,7 @@ function App() {
     },
     asciiOptions: {
       fontSize,
-      charSet: charSetType === 'default' ? DEFAULT_CHAR_SET : DENSE_CHAR_SET,
+      charSet: charSetType === 'default' ? DEFAULT_CHAR_SET : (charSetType === 'dense' ? DENSE_CHAR_SET : BINARY_CHAR_SET),
       inverted
     },
     isPlaying
@@ -147,6 +151,11 @@ function App() {
   return (
     <div className="app-container" onDrop={handleDrop} onDragOver={handleDragOver}>
       <aside className="sidebar">
+        <div style={{ marginBottom: '8px' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '4px' }}>Ditther</h1>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Dither & ASCII Processor</p>
+        </div>
+
         <h2 className="section-title">Effects</h2>
         <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -200,6 +209,7 @@ function App() {
               options={[
                 { label: 'Default (Sparse)', value: 'default' },
                 { label: 'Dense', value: 'dense' },
+                { label: 'Binary (0/1)', value: 'binary' },
               ]}
               onChange={setCharSetType}
             />
@@ -223,8 +233,12 @@ function App() {
         <ColorPalette
           inkColor={inkColor}
           bgColor={bgColor}
+          inkMode={inkMode}
+          inkGradient={inkGradient}
           onInkChange={setInkColor}
           onBgChange={setBgColor}
+          onInkModeChange={setInkMode}
+          onInkGradientChange={setInkGradient}
         />
 
         <div style={{ height: '16px' }}></div>

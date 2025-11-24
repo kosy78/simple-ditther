@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { processImage, hexToRgb, type DitherOptions, type AlgorithmName } from '../lib/dither';
+import { processImage, type DitherOptions, type AlgorithmName } from '../lib/dither';
+import { hexToRgb } from '../lib/utils';
 import { processAscii, DEFAULT_CHAR_SET } from '../lib/ascii';
 
 interface UseMediaProcessorProps {
@@ -10,6 +11,8 @@ interface UseMediaProcessorProps {
         algorithm: string;
         pointSize: number;
         inkColor: string;
+        inkMode: 'solid' | 'gradient';
+        inkGradient: string[];
         bgColor: string;
         brightness: number;
         contrast: number;
@@ -109,6 +112,8 @@ export const useMediaProcessor = ({ src, type, activeTab, options, asciiOptions,
                 charSet: asciiOptions.charSet || DEFAULT_CHAR_SET,
                 inverted: asciiOptions.inverted,
                 color: options.inkColor,
+                inkMode: options.inkMode,
+                inkGradient: options.inkGradient,
                 bgColor: options.bgColor
             });
 
@@ -139,7 +144,9 @@ export const useMediaProcessor = ({ src, type, activeTab, options, asciiOptions,
                 pointSize: options.pointSize,
                 palette: {
                     ink: hexToRgb(options.inkColor),
-                    bg: hexToRgb(options.bgColor)
+                    bg: hexToRgb(options.bgColor),
+                    inkMode: options.inkMode,
+                    inkGradient: options.inkGradient.map(hexToRgb)
                 },
                 brightness: options.brightness,
                 contrast: options.contrast,

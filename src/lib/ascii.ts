@@ -1,13 +1,19 @@
+import { interpolateColor, rgbToString } from './utils';
+
 export interface AsciiOptions {
     fontSize: number;
     charSet: string;
     inverted: boolean;
     color: string;
+    inkMode?: 'solid' | 'gradient';
+    inkGradient?: string[];
     bgColor: string;
 }
 
+
 export const DEFAULT_CHAR_SET = ' .:-=+*#%@';
 export const DENSE_CHAR_SET = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
+export const BINARY_CHAR_SET = '01';
 
 export const processAscii = (
     imageData: ImageData,
@@ -40,7 +46,7 @@ export const processAscii = (
 
     // Set font
     ctx.font = `${options.fontSize}px monospace`;
-    ctx.fillStyle = options.color;
+    // ctx.fillStyle = options.color; // Set per character if gradient
     ctx.textBaseline = 'top';
 
     const charSet = options.inverted
@@ -65,6 +71,14 @@ export const processAscii = (
             // Map to char
             const charIndex = Math.floor((brightness / 255) * (charSet.length - 1));
             const char = charSet[charIndex];
+
+            if (options.inkMode === 'gradient' && options.inkGradient) {
+                // Map Y position to gradient
+                const color = interpolateColor(options.inkGradient, y / rows);
+                ctx.fillStyle = rgbToString(color);
+            } else {
+                ctx.fillStyle = options.color;
+            }
 
             ctx.fillText(char, x * fontWidth, y * fontHeight);
         }

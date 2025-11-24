@@ -1,5 +1,6 @@
 import React from 'react';
 import './ColorPalette.css';
+import { GradientEditor } from './GradientEditor';
 
 interface Palette {
     ink: string;
@@ -9,8 +10,12 @@ interface Palette {
 interface ColorPaletteProps {
     inkColor: string;
     bgColor: string;
+    inkMode: 'solid' | 'gradient';
+    inkGradient: string[];
     onInkChange: (color: string) => void;
     onBgChange: (color: string) => void;
+    onInkModeChange: (mode: 'solid' | 'gradient') => void;
+    onInkGradientChange: (gradient: string[]) => void;
 }
 
 const PRESETS: Palette[] = [
@@ -26,8 +31,12 @@ const PRESETS: Palette[] = [
 export const ColorPalette: React.FC<ColorPaletteProps> = ({
     inkColor,
     bgColor,
+    inkMode,
+    inkGradient,
     onInkChange,
-    onBgChange
+    onBgChange,
+    onInkModeChange,
+    onInkGradientChange
 }) => {
 
     const handlePresetClick = (preset: Palette) => {
@@ -56,16 +65,40 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             </div>
 
             <div className="color-pickers">
-                <div className="color-picker-item">
-                    <label>Ink</label>
-                    <div className="color-input-wrapper">
-                        <input
-                            type="color"
-                            value={inkColor}
-                            onChange={(e) => onInkChange(e.target.value)}
-                        />
-                        <span className="color-value">{inkColor}</span>
+                <div className="color-picker-item" style={{ flex: inkMode === 'gradient' ? '1 1 100%' : '1' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <label>Ink</label>
+                        <div className="mode-toggle">
+                            <button
+                                className={`mode-btn ${inkMode === 'solid' ? 'active' : ''}`}
+                                onClick={() => onInkModeChange('solid')}
+                            >
+                                Solid
+                            </button>
+                            <button
+                                className={`mode-btn ${inkMode === 'gradient' ? 'active' : ''}`}
+                                onClick={() => onInkModeChange('gradient')}
+                            >
+                                Gradient
+                            </button>
+                        </div>
                     </div>
+
+                    {inkMode === 'solid' ? (
+                        <div className="color-input-wrapper">
+                            <input
+                                type="color"
+                                value={inkColor}
+                                onChange={(e) => onInkChange(e.target.value)}
+                            />
+                            <span className="color-value">{inkColor}</span>
+                        </div>
+                    ) : (
+                        <GradientEditor
+                            colors={inkGradient}
+                            onChange={onInkGradientChange}
+                        />
+                    )}
                 </div>
                 <div className="color-picker-item">
                     <label>BG</label>

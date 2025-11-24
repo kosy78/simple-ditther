@@ -1,8 +1,6 @@
-export interface RGB {
-    r: number;
-    g: number;
-    b: number;
-}
+import { interpolateColor, type RGB } from './utils';
+
+export type { RGB };
 
 export type AlgorithmName =
     | 'Floyd-Steinberg'
@@ -20,6 +18,8 @@ export interface DitherOptions {
     palette: {
         ink: RGB;
         bg: RGB;
+        inkMode?: 'solid' | 'gradient';
+        inkGradient?: RGB[];
     };
     brightness: number;
     contrast: number;
@@ -124,15 +124,7 @@ const KERNELS: Record<AlgorithmName, { kernel: Kernel; divisor: number }> = {
     }
 };
 
-// Helper to parse hex to RGB
-export const hexToRgb = (hex: string): RGB => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : { r: 0, g: 0, b: 0 };
-};
+
 
 // Calculate color distance (Euclidean)
 const colorDistance = (c1: RGB, c2: RGB) => {
@@ -149,6 +141,8 @@ const getClosestColor = (current: RGB, palette: { ink: RGB, bg: RGB }): RGB => {
     const distBg = colorDistance(current, palette.bg);
     return distInk < distBg ? palette.ink : palette.bg;
 };
+
+
 
 export const processImage = (
     imageData: ImageData,
@@ -198,7 +192,15 @@ export const processImage = (
             const oldG = data[i + 1];
             const oldB = data[i + 2];
 
-            const closest = getClosestColor({ r: oldR, g: oldG, b: oldB }, options.palette);
+            let currentPalette = options.palette;
+
+            if (options.palette.inkMode === 'gradient' && options.palette.inkGradient) {
+                // Calculate ink color for this row
+                const inkAtY = interpolateColor(options.palette.inkGradient, y / height);
+                currentPalette = { ...options.palette, ink: inkAtY };
+            }
+
+            const closest = getClosestColor({ r: oldR, g: oldG, b: oldB }, currentPalette);
 
             data[i] = closest.r;
             data[i + 1] = closest.g;
